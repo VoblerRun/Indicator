@@ -36,11 +36,8 @@ public class AuthorizationActivity extends AppCompatActivity {
     {
         String text = getTextInptiField(R.id.outlinedTextField);
         String password = getTextInptiField(R.id.outlinedTextField2);
-        ArrayList<String> passing = new ArrayList<String>();
-        passing.add(text);
-        passing.add(password);
 
-        new WebServiceGet().execute(passing);
+        new WebServiceGet().execute(text , password);
     }
 
     private String getTextInptiField(int idField){

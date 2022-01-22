@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class WebServiceGet extends AsyncTask<ArrayList<String>, Void, String> {
+public class WebServiceGet extends AsyncTask<String, Void, String> {
     private static final String REQUEST_METHOD = "GET";
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
@@ -25,11 +25,15 @@ public class WebServiceGet extends AsyncTask<ArrayList<String>, Void, String> {
 
 
     @Override
-    protected String doInBackground(ArrayList<String>... arrayLists) {
+    protected String doInBackground(String... paramsForLogin) {
+
         String jsonObjectAuthorization = new String();
+
+        String url = "http://192.168.1.66:8080/LogLet?";
+        String urlWithParametres = compilingГUrl(url, paramsForLogin);
         //Create a URL object holding our url
         try {
-            InputStream getResponseInputStream = getResponseServer();
+            InputStream getResponseInputStream = getResponseServer(urlWithParametres);
             jsonObjectAuthorization = convertStreamToString(getResponseInputStream);
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,8 +57,12 @@ public class WebServiceGet extends AsyncTask<ArrayList<String>, Void, String> {
         }
     }
 
-    private InputStream getResponseServer() throws IOException {
-        URL myUrl = new URL("http://192.168.1.66:8080/LogLet?username=username&password=password");
+    private String compilingГUrl(String url, String... paramsForLogin){
+        return  url + "username=" + paramsForLogin[0] + "&password=" + paramsForLogin[1];
+    }
+
+    private InputStream getResponseServer(String url) throws IOException {
+        URL myUrl = new URL(url);
         //Create a connection
         HttpURLConnection connection =(HttpURLConnection)
                 myUrl.openConnection();
