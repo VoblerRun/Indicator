@@ -17,30 +17,24 @@ public class SenderRequest  extends AsyncTask<String, String, String>{
         URL url = null;
         String content = "", line;
         try {
-            url = new URL(urls[0]);
+            url = new URL("http://192.168.1.66:8080/add");
 
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setDoOutput(true);
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-        connection.connect();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-        while ((line = rd.readLine()) != null) {
-            content += line + "\n";
-        }
-        } catch (MalformedURLException | ProtocolException e) {
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoOutput(true);
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            connection.connect();
+            content = String.valueOf(connection.getInputStream());
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return content;
-    }
 
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-        //Do anything with response..
+
+        return content;
     }
 }
