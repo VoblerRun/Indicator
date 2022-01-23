@@ -2,6 +2,8 @@ package com.example.indicator;
 
 import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -22,7 +24,10 @@ public class WebServiceGet extends AsyncTask<String, Void, String> {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
 
-
+    Context context;
+    WebServiceGet(Context context) {
+        this.context = context.getApplicationContext();
+    }
 
     @Override
     protected String doInBackground(String... paramsForLogin) {
@@ -30,7 +35,7 @@ public class WebServiceGet extends AsyncTask<String, Void, String> {
         String jsonObjectAuthorization = new String();
 
         String url = "http://192.168.1.66:8080/LogLet?";
-        String urlWithParametres = compilingГUrl(url, paramsForLogin);
+        String urlWithParametres = compilingUrl(url, paramsForLogin);
         //Create a URL object holding our url
         try {
             InputStream getResponseInputStream = getResponseServer(urlWithParametres);
@@ -52,12 +57,16 @@ public class WebServiceGet extends AsyncTask<String, Void, String> {
             AuthorizationData  authorizationData = new AuthorizationData();
             authorizationData.setIsSuccessAuthorization((Boolean) jObj.get(NAME_FIELD_SUCCESSAUTHORIZATION));
             authorizationData.setTokenSession((String) jObj.get(NAME_FIELD_TOKENSESSION));
+
+            Intent intent = new Intent(context, HeadActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private String compilingГUrl(String url, String... paramsForLogin){
+    private String compilingUrl(String url, String... paramsForLogin){
         return  url + "username=" + paramsForLogin[0] + "&password=" + paramsForLogin[1];
     }
 
