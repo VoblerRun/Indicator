@@ -5,8 +5,8 @@ import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class WebServiceGet extends AsyncTask<String, Void, String> {
     private static final String REQUEST_METHOD = "GET";
@@ -58,9 +57,12 @@ public class WebServiceGet extends AsyncTask<String, Void, String> {
             authorizationData.setIsSuccessAuthorization((Boolean) jObj.get(NAME_FIELD_SUCCESSAUTHORIZATION));
             authorizationData.setTokenSession((String) jObj.get(NAME_FIELD_TOKENSESSION));
 
-            Intent intent = new Intent(context, HeadActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            Validator validator = new Validator();
+            if(validator.isCorrectAuthorizationData(authorizationData)) {
+                startHeadActivity(authorizationData.getTokenSession());
+            }else{
+                Toast.makeText(context.getApplicationContext(), "Не подошли параметры", Toast.LENGTH_SHORT).show();
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -68,6 +70,15 @@ public class WebServiceGet extends AsyncTask<String, Void, String> {
 
     private String compilingUrl(String url, String... paramsForLogin){
         return  url + "username=" + paramsForLogin[0] + "&password=" + paramsForLogin[1];
+    }
+
+    private void startHeadActivity(String token){
+        Intent intent = new Intent(context, HeadActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("token", token);
+        context.startActivity(intent);
+
+
     }
 
     private InputStream getResponseServer(String url) throws IOException {
